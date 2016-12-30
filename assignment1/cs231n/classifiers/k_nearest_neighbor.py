@@ -1,7 +1,9 @@
 import numpy as np
 
 class KNearestNeighbor:
-  """ a kNN classifier with L2 distance """
+  """ a kNN classifier with L2 distance 
+  TEJASH EDIT: l2 distance is Euclidean distance
+  """
 
   def __init__(self):
     pass
@@ -49,8 +51,6 @@ class KNearestNeighbor:
     in self.X_train using a nested loop over both the training data and the 
     test data. 
 
-    TEJASH EDIT: Distance used will be Absolute Difference between self.X_train and X
-
     Input:
     X - An num_test x dimension array where each row is a test point.
 
@@ -72,8 +72,6 @@ class KNearestNeighbor:
     Compute the distance between each test point in X and each training point
     in self.X_train using a single loop over the test data.
 
-    TEJASH EDIT: Distance will be Absolute Distance between self.X_train and X
-
     Input / Output: Same as compute_distances_two_loops
     """
     num_test = X.shape[0]
@@ -88,8 +86,6 @@ class KNearestNeighbor:
     """
     Compute the distance between each test point in X and each training point
     in self.X_train using no explicit loops.
-
-    TEJASH EDIT: Distance will be Absolute Difference between self.X_train and X
 
     Input / Output: Same as compute_distances_two_loops
     """
@@ -122,7 +118,8 @@ class KNearestNeighbor:
     for i in xrange(num_test):
       closest_y = [] # A list of length k storing the labels of the k nearest neighbors to the ith test point.
       nearest_k_matches = np.argsort(dists[i])[:k] # holds the indices of the minimum k values in dists
-      closest_y = self.y_train[nearest_k_matches] # holds the labels of the nearest k matches
+      closest_y = self.y_train[nearest_k_matches].reshape(-1) # holds the labels of the nearest k matches
+      # print 'closest_y', closest_y.shape, k, self.y_train.shape
       y_pred[i] = np.bincount(closest_y).argmax() # holds the maximum occuring label value in closest_y
       """
       LEARNING:
