@@ -3,30 +3,25 @@ from random import shuffle
 
 def svm_loss_naive(W, X, y, reg):
   """
-  Structured SVM loss function, naive implementation (with loops).
-
-  Inputs have dimension D, there are C classes, and we operate on minibatches
-  of N examples.
-
+  Structured SVM loss function, naive implementation (with loops)
   Inputs:
-  - W: A numpy array of shape (D, C) containing weights.
-  - X: A numpy array of shape (N, D) containing a minibatch of data.
-  - y: A numpy array of shape (N,) containing training labels; y[i] = c means
-    that X[i] has label c, where 0 <= c < C.
+  - W: C x D array of weights
+  - X: D x N array of data. Data are D-dimensional columns
+  - y: 1-dimensional array of length N with labels 0...K-1, for K classes
   - reg: (float) regularization strength
-
-  Returns a tuple of:
+  Returns:
+  a tuple of:
   - loss as single float
   - gradient with respect to weights W; an array of same shape as W
   """
   dW = np.zeros(W.shape) # initialize the gradient as zero
 
   # compute the loss and the gradient
-  num_classes = W.shape[1]
-  num_train = X.shape[0]
+  num_classes = W.shape[0]
+  num_train = X.shape[1]
   loss = 0.0
   for i in xrange(num_train):
-    scores = X[i].dot(W)
+    scores = W.dot(X[:, i])
     correct_class_score = scores[y[i]]
     for j in xrange(num_classes):
       if j == y[i]:

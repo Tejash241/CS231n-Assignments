@@ -2,7 +2,7 @@ import numpy as np
 from cs231n.classifiers.linear_svm import *
 from cs231n.classifiers.softmax import *
 
-class LinearClassifier(object):
+class LinearClassifier:
 
   def __init__(self):
     self.W = None
@@ -13,10 +13,9 @@ class LinearClassifier(object):
     Train this linear classifier using stochastic gradient descent.
 
     Inputs:
-    - X: A numpy array of shape (N, D) containing training data; there are N
-      training samples each of dimension D.
-    - y: A numpy array of shape (N,) containing training labels; y[i] = c
-      means that X[i] has label 0 <= c < C for C classes.
+    - X: D x N array of training data. Each training point is a D-dimensional
+         column.
+    - y: 1-dimensional array of length N with labels 0...K-1, for K classes.
     - learning_rate: (float) learning rate for optimization.
     - reg: (float) regularization strength.
     - num_iters: (integer) number of steps to take when optimizing
@@ -26,11 +25,11 @@ class LinearClassifier(object):
     Outputs:
     A list containing the value of the loss function at each training iteration.
     """
-    num_train, dim = X.shape
+    dim, num_train = X.shape
     num_classes = np.max(y) + 1 # assume y takes values 0...K-1 where K is number of classes
     if self.W is None:
       # lazily initialize W
-      self.W = 0.001 * np.random.randn(dim, num_classes)
+      self.W = np.random.randn(num_classes, dim) * 0.001
 
     # Run stochastic gradient descent to optimize W
     loss_history = []
@@ -103,9 +102,8 @@ class LinearClassifier(object):
     Subclasses will override this.
 
     Inputs:
-    - X_batch: A numpy array of shape (N, D) containing a minibatch of N
-      data points; each point has dimension D.
-    - y_batch: A numpy array of shape (N,) containing labels for the minibatch.
+    - X_batch: D x N array of data; each column is a data point.
+    - y_batch: 1-dimensional array of length N with labels 0...K-1, for K classes.
     - reg: (float) regularization strength.
 
     Returns: A tuple containing:
