@@ -95,8 +95,8 @@ class KNearestNeighbor:
 
     Xtrain_sq = np.square(self.X_train).sum(axis=1)
     X_sq = np.square(X).sum(axis=1)
-    mux = 2*(X.dot(self.X_train.T))
-    dists = np.sqrt(Xtrain_sq+np.matrix(X_sq).T-mux)
+    mux = 2*X.dot(self.X_train.T)
+    dists = np.sqrt(X_sq.reshape(X_sq.shape + (1,))+Xtrain_sq-mux)
 
     return dists
 
@@ -113,14 +113,17 @@ class KNearestNeighbor:
     y - A vector of length num_test where y[i] is the predicted label for the
         ith test point.
     """
+    print dists.shape, dists[0].shape, type(dists)
     num_test = dists.shape[0]
     y_pred = np.zeros(num_test)
     for i in xrange(num_test):
       closest_y = [] # A list of length k storing the labels of the k nearest neighbors to the ith test point.
       nearest_k_matches = np.argsort(dists[i])[:k] # holds the indices of the minimum k values in dists
-      closest_y = self.y_train[nearest_k_matches].reshape(-1) # holds the labels of the nearest k matches
+      # print nearest_k_matches.shape # prints (<k>, )
+      closest_y = self.y_train[nearest_k_matches].flatten() # holds the labels of the nearest k matches
       # print 'closest_y', closest_y.shape, k, self.y_train.shape
       y_pred[i] = np.bincount(closest_y).argmax() # holds the maximum occuring label value in closest_y
+      # print y_pred[i]
       """
       LEARNING:
       np.bincount (can be used only for 1d arrays with nonnegative ints) produces a ndarray 
