@@ -113,21 +113,18 @@ class KNearestNeighbor:
     y - A vector of length num_test where y[i] is the predicted label for the
         ith test point.
     """
-    print dists.shape, dists[0].shape, type(dists)
     num_test = dists.shape[0]
     y_pred = np.zeros(num_test)
     for i in xrange(num_test):
       closest_y = [] # A list of length k storing the labels of the k nearest neighbors to the ith test point.
       nearest_k_matches = np.argsort(dists[i])[:k] # holds the indices of the minimum k values in dists
-      # print nearest_k_matches.shape # prints (<k>, )
       closest_y = self.y_train[nearest_k_matches].flatten() # holds the labels of the nearest k matches
       # print 'closest_y', closest_y.shape, k, self.y_train.shape
       y_pred[i] = np.bincount(closest_y).argmax() # holds the maximum occuring label value in closest_y
-      # print y_pred[i]
       """
       LEARNING:
       np.bincount (can be used only for 1d arrays with nonnegative ints) produces a ndarray 
-      (which is a container for a numpy array of the same dimension) that contains the count of each integer occuring 
+      which is a container for the original array of the same dimension that contains the count of each integer occuring 
       in the array.
       np.argmax provides the first value of the maximum occurence in an array. 
       Applying it to the o/p of np.bincount will give the smaller label in case of ties
