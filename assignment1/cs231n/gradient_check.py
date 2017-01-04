@@ -34,7 +34,7 @@ def grad_check_sparse(f, x, analytic_grad, num_checks):
   sample a few random elements and only return numerical
   in this dimensions.
   """
-  h = 1e-5
+  h = 1e-5 # limit as h tends to zero, hence h is small
 
   x.shape
   for i in xrange(num_checks):
@@ -42,11 +42,11 @@ def grad_check_sparse(f, x, analytic_grad, num_checks):
 
     x[ix] += h # increment by h
     fxph = f(x) # evaluate f(x + h)
-    x[ix] -= 2 * h # increment by h
+    x[ix] -= 2 * h # decrement by h
     fxmh = f(x) # evaluate f(x - h)
     x[ix] += h # reset
 
-    grad_numerical = (fxph - fxmh) / (2 * h)
+    grad_numerical = (fxph - fxmh) / (2 * h) # translates to (f(x+h)-f(x-h))/2h
     grad_analytic = analytic_grad[ix]
     rel_error = abs(grad_numerical - grad_analytic) / (abs(grad_numerical) + abs(grad_analytic))
     print 'numerical: %f analytic: %f, relative error: %e' % (grad_numerical, grad_analytic, rel_error)

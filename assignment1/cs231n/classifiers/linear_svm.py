@@ -29,24 +29,15 @@ def svm_loss_naive(W, X, y, reg):
       margin = scores[j] - correct_class_score + 1 # note delta = 1
       if margin > 0:
         loss += margin
+        dW[j, :] += X[:, i]
+        dW[y[i], :] -= X[:, i]
 
-  # Right now the loss is a sum over all training examples, but we want it
-  # to be an average instead so we divide by num_train.
   loss /= num_train
+  dW /= num_train
 
   # Add regularization to the loss.
-  loss += 0.5 * reg * np.sum(W * W)
-
-  #############################################################################
-  # TODO:                                                                     #
-  # Compute the gradient of the loss function and store it dW.                #
-  # Rather that first computing the loss and then computing the derivative,   #
-  # it may be simpler to compute the derivative at the same time that the     #
-  # loss is being computed. As a result you may need to modify some of the    #
-  # code above to compute the gradient.                                       #
-  #############################################################################
-
-
+  loss += 0.5 * reg * np.sum(W * W) # Reg(W) = sigmai(sigmaj(Wij(square))), how did divide by 2 come?
+  dW += reg*W # LEARNING: dW(Loss+Regularization) = dW(loss) + dW(Regularization); dW(Reg) = 0.5*reg*2*W = reg*W
   return loss, dW
 
 
@@ -58,30 +49,32 @@ def svm_loss_vectorized(W, X, y, reg):
   """
   loss = 0.0
   dW = np.zeros(W.shape) # initialize the gradient as zero
+  num_train = X.shape[1]
+  num_classes = W.shape[0]
+  test_scores = W.dot(X) # test_scores has the shape of (10, 49000)
+  correct_scores = test_scores[y, np.arange(num_train)] # correct_scores has a shape of (49000,)
+  margin = test_scores-correct_scores+1 # margin will have a shape of (10, 49000)
+  margin[y, np.arange(num_train)] = 0
+  loss = np.sum(margin[margin>0])
 
-  #############################################################################
-  # TODO:                                                                     #
-  # Implement a vectorized version of the structured SVM loss, storing the    #
-  # result in loss.                                                           #
-  #############################################################################
-  pass
-  #############################################################################
-  #                             END OF YOUR CODE                              #
-  #############################################################################
+  # for i in xrange(num_train):
+  #   test_score = W.dot(X[:, i]) # test_score has shape (10,)
+  #   correct_score = test_score[y[i]] # correct_score is a single number
+  #   margin = test_score-correct_score+1 # margin will have a shape of (10, )
+  #   margin[y[i]] = 0
+  #   loss += np.sum(margin[margin>0])
 
+  loss /= num_train
+  loss += 0.5*reg*np.sum(W*W)
 
-  #############################################################################
-  # TODO:                                                                     #
-  # Implement a vectorized version of the gradient for the structured SVM     #
-  # loss, storing the result in dW.                                           #
-  #                                                                           #
-  # Hint: Instead of computing the gradient from scratch, it may be easier    #
-  # to reuse some of the intermediate values that you used to compute the     #
-  # loss.                                                                     #
-  #############################################################################
-  pass
-  #############################################################################
-  #                             END OF YOUR CODE                              #
-  #############################################################################
+  bin_matrix = np.maximum(0, margin)
+  bin_matrix[bin_matrix>0] = 1 # bin_matrix has the same shape as margin
+  col_sum = np.sum(bin_matrix, axis=0)
+  bin_matrix[y, range(num_train)] = -col_sum[range(num_train)]
+
+  dW = bin_matrix.dot(X.T)
+
+  dW /= num_train
+  dW += reg*W
 
   return loss, dW
