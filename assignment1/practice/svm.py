@@ -133,29 +133,29 @@ for lr, reg in sorted(results):
     train_accuracy, val_accuracy = results[(lr, reg)]
     print 'lr %e reg %e train accuracy: %f val accuracy: %f' % (lr, reg, train_accuracy, val_accuracy)
     
-print 'best validation accuracy achieved during cross-validation: %f' % best_val
+print 'best validation accuracy achieved during cross-validation: %f' % best_val # best_val obtained is approx 38.9%
 
-# Visualize the cross-validation results
-import math
-x_scatter = [math.log10(x[0]) for x in results]
-y_scatter = [math.log10(x[1]) for x in results]
+# # Visualize the cross-validation results
+# import math
+# x_scatter = [math.log10(x[0]) for x in results]
+# y_scatter = [math.log10(x[1]) for x in results]
 
-# plot training accuracy
-sz = [results[x][0]*1500 for x in results] # default size of markers is 20
-plt.subplot(1,2,1)
-plt.scatter(x_scatter, y_scatter, sz)
-plt.xlabel('log learning rate')
-plt.ylabel('log regularization strength')
-plt.title('CIFAR-10 training accuracy')
+# # plot training accuracy
+# sz = [results[x][0]*1500 for x in results] # default size of markers is 20
+# plt.subplot(1,2,1)
+# plt.scatter(x_scatter, y_scatter, sz)
+# plt.xlabel('log learning rate')
+# plt.ylabel('log regularization strength')
+# plt.title('CIFAR-10 training accuracy')
 
-# plot validation accuracy
-sz = [results[x][1]*1500 for x in results] # default size of markers is 20
-plt.subplot(1,2,2)
-plt.scatter(x_scatter, y_scatter, sz)
-plt.xlabel('log learning rate')
-plt.ylabel('log regularization strength')
-plt.title('CIFAR-10 validation accuracy')
-plt.savefig('validation_accuracy.png')
+# # plot validation accuracy
+# sz = [results[x][1]*1500 for x in results] # default size of markers is 20
+# plt.subplot(1,2,2)
+# plt.scatter(x_scatter, y_scatter, sz)
+# plt.xlabel('log learning rate')
+# plt.ylabel('log regularization strength')
+# plt.title('CIFAR-10 validation accuracy')
+# plt.savefig('validation_accuracy.png')
 
 # Evaluate the best svm on test set
 y_test_pred = best_svm.predict(X_test)
@@ -177,3 +177,4 @@ for i in xrange(10):
   plt.imshow(wimg.astype('uint8'))
   plt.axis('off')
   plt.title(classes[i])
+  plt.savefig('mean_images.png')
